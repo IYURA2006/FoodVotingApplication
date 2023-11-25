@@ -5,7 +5,7 @@ import Swiper from 'react-native-swiper';
 
 const Introduction: React.FC = () => {
   return (
-    <Swiper showsButtons={false} showsPagination={true}>
+    <Swiper showsButtons={false} showsPagination={true} loop={false}>
       <View style={styles.slide}>
         <Text>Page 1</Text>
       </View>
