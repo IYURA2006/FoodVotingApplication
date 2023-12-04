@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { View, Text, Image, StyleSheet, Button, Pressable } from 'react-native';
 
@@ -13,7 +12,6 @@ const WelcomeScreen: React.FC = ({ navigation }: any) => {
 
   return (
     <View style={styles.container}>
-      {/* Background Image */}
       <Image source={require('../assets/Pattern.png')} style={styles.backgroundImage} />
 
       <View style={styles.logoContainer}>
@@ -26,7 +24,7 @@ const WelcomeScreen: React.FC = ({ navigation }: any) => {
           <Button  title="Sign In" onPress={handleSignIn} color='#FFFFFF' />
         </View>
         <Pressable onPress={handleCreateAccount}>
-          <Text style={styles.createAccountText}>Don't have an account? Create one.</Text>
+          <Text style={styles.createAccountText}>Don't have an account? Create one!</Text>
         </Pressable>
       </View>
     </View>

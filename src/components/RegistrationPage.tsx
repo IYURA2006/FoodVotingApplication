@@ -33,6 +33,12 @@ const RegistrationPage: React.FC<RegistrationPageProps> = ({ navigation }) => {
         <Text style={styles.headerText}>Create an Account</Text>
         <TextInput
           style={styles.input}
+          placeholder='Your name'
+          autoCapitalize='none'
+          onChangeText={(text) => setEmail(text)}
+        />
+        <TextInput
+          style={styles.input}
           placeholder='Email'
           autoCapitalize='none'
           onChangeText={(text) => setEmail(text)}
@@ -40,6 +46,13 @@ const RegistrationPage: React.FC<RegistrationPageProps> = ({ navigation }) => {
         <TextInput
           style={styles.input}
           placeholder='Password'
+          autoCapitalize='none'
+          onChangeText={(text) => setPassword(text)}
+          secureTextEntry={true}
+        />
+         <TextInput
+          style={styles.input}
+          placeholder='Repeat your password'
           autoCapitalize='none'
           onChangeText={(text) => setPassword(text)}
           secureTextEntry={true}
