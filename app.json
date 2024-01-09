@@ -1,4 +1,7 @@
 {
-  "name": "WasteFree",
-  "displayName": "WasteFree"
+  "expo": {
+    "name": "WasteFree",
+    "slug": "WasteFree",
+    "sdkVersion": "49.0.0"
+  }
 }

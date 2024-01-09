@@ -3,11 +3,13 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Introduction from './components/IntroductionPage';
 import Login from './components/LoginPage';
-import Registration from './components/RegistrationPage';  // Import the RegistrationPage component
+import Registration from './components/RegistrationPage';
 import Main from './components/Main';
 import WelcomeScreen from './components/WelcomePage';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { FIREBASE_AUTH } from '../FirebaseConfig';
+
+import ResultsPage from './components/Inside/ResultsPage';
 
 const Stack = createStackNavigator();
 
@@ -32,7 +34,10 @@ function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Introduction">
         {user ? (
-          <Stack.Screen name='Inside' component={InsideLayout} options={{ headerShown: true }} />
+          <>
+            <Stack.Screen name='Inside' component={InsideLayout} options={{ headerShown: false }} />
+            <Stack.Screen name='Results' component={ResultsPage} />
+          </>
         ) : (
           <>
             <Stack.Screen name='WelcomeScreen' component={WelcomeScreen} options={{ headerShown: false }} />
@@ -41,7 +46,6 @@ function App() {
           </>
         )}
       </Stack.Navigator>
-    
     </NavigationContainer>
   );
 }

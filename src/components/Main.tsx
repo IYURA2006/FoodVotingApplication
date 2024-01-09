@@ -1,18 +1,41 @@
-import { View, Text, Button } from 'react-native'
-import React from 'react'
-import { FIREBASE_AUTH } from '../../FirebaseConfig';
-import { NavigationProp } from '@react-navigation/native';
+import * as React from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import HomeScreen from './Inside/HomePage';
+import VotingScreen from './Inside/VotingPage';
+import ResultsScreen from './Inside/ResultsPage';
+import FeedbackScreen from './Inside/FeedbackPage';
 
-interface RouterProps {
-    navigation: NavigationProp <any, any>;
-}
+import Ionicons from '@expo/vector-icons/Ionicons';
 
-const Main = ({navigation} : RouterProps) => {
+const Tab = createBottomTabNavigator();
+
+export default function Main() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Button onPress={() => FIREBASE_AUTH.signOut()} title="Logout" />
-    </View>
-  )
-}
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
 
-export default Main
+            if (route.name === 'Home') {
+              iconName = focused ? 'ios-information-circle' : 'ios-information-circle-outline';
+            } else if (route.name === 'Voting') {
+              iconName = focused ? 'ios-list' : 'ios-list-outline';
+            } else if (route.name === 'Results') {
+              iconName = focused ? 'ios-list' : 'ios-list-outline';
+            } else if (route.name === 'Feedback') {
+              iconName = focused ? 'ios-list' : 'ios-list-outline';
+            }
+
+            // You can return any component that you like here!
+            return <Ionicons name={iconName} size={size} color={color} />;
+          },
+          tabBarActiveTintColor: 'tomato',
+          tabBarInactiveTintColor: 'gray',
+        })}>
+        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Voting" component={VotingScreen} />
+        <Tab.Screen name="Results" component={ResultsScreen} />
+        <Tab.Screen name="Feedback" component={FeedbackScreen} />
+      </Tab.Navigator>
+  );
+}
