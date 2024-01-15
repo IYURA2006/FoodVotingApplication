@@ -1,41 +1,51 @@
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+import SvgUri from 'react-native-svg-uri';
+
 import HomeScreen from './Inside/HomePage';
 import VotingScreen from './Inside/VotingPage';
 import ResultsScreen from './Inside/ResultsPage';
 import FeedbackScreen from './Inside/FeedbackPage';
-
-import Ionicons from '@expo/vector-icons/Ionicons';
+import ProfileScreen from './ProfilePage';
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
-export default function Main() {
-  return (
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
+const TabNavigator = () => (
+  <Tab.Navigator
+    screenOptions={({ route }) => ({
+      tabBarIcon: ({ focused, color, size }) => {
+        let iconPath;
 
-            if (route.name === 'Home') {
-              iconName = focused ? 'ios-information-circle' : 'ios-information-circle-outline';
-            } else if (route.name === 'Voting') {
-              iconName = focused ? 'ios-list' : 'ios-list-outline';
-            } else if (route.name === 'Results') {
-              iconName = focused ? 'ios-list' : 'ios-list-outline';
-            } else if (route.name === 'Feedback') {
-              iconName = focused ? 'ios-list' : 'ios-list-outline';
-            }
+        if (route.name === 'Home') {
+          iconPath = focused ? require('../assets/icons/house-solid.svg') : require('../assets/icons/house-solid.svg');
+        } else if (route.name === 'Voting') {
+          iconPath = focused ? require('../assets/icons/check-to-slot-solid.svg') : require('../assets/icons/check-to-slot-solid.svg');
+        } else if (route.name === 'Results') {
+          iconPath = focused ? require('../assets/icons/square-poll-vertical-solid.svg') : require('../assets/icons/square-poll-vertical-solid.svg');
+        } else if (route.name === 'Feedback') {
+          iconPath = focused ? require('../assets/icons/comments-solid.svg') : require('../assets/icons/comments-solid.svg');
+        }
 
-            // You can return any component that you like here!
-            return <Ionicons name={iconName} size={size} color={color} />;
-          },
-          tabBarActiveTintColor: 'tomato',
-          tabBarInactiveTintColor: 'gray',
-        })}>
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Voting" component={VotingScreen} />
-        <Tab.Screen name="Results" component={ResultsScreen} />
-        <Tab.Screen name="Feedback" component={FeedbackScreen} />
-      </Tab.Navigator>
-  );
-}
+        return <SvgUri width={size} height={size} source={iconPath} />;
+      },
+      tabBarActiveTintColor: 'green',
+      tabBarInactiveTintColor: 'gray',
+    })}
+  >
+    <Tab.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+    <Tab.Screen name="Voting" component={VotingScreen} options={{ headerShown: false }} />
+    <Tab.Screen name="Results" component={ResultsScreen} options={{ headerShown: false }} />
+    <Tab.Screen name="Feedback" component={FeedbackScreen} options={{ headerShown: false }} />
+  </Tab.Navigator>
+);
+
+const Main = () => (
+  <Stack.Navigator>
+    <Stack.Screen name="Menu" component={TabNavigator} options={{ headerShown: false }} />
+    <Stack.Screen name="Profile" component={ProfileScreen} />
+  </Stack.Navigator>
+);
+
+export default Main;
