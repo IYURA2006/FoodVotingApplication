@@ -19,13 +19,13 @@ const TabNavigator = () => (
         let iconPath;
 
         if (route.name === 'Home') {
-          iconPath = focused ? require('../assets/icons/house-solid.svg') : require('../assets/icons/house-solid.svg');
+          iconPath = focused ? require('../assets/icons/house-solid-focused.svg') : require('../assets/icons/house-solid.svg');
         } else if (route.name === 'Voting') {
-          iconPath = focused ? require('../assets/icons/check-to-slot-solid.svg') : require('../assets/icons/check-to-slot-solid.svg');
+          iconPath = focused ? require('../assets/icons/check-to-slot-solid-focused.svg') : require('../assets/icons/check-to-slot-solid.svg');
         } else if (route.name === 'Results') {
-          iconPath = focused ? require('../assets/icons/square-poll-vertical-solid.svg') : require('../assets/icons/square-poll-vertical-solid.svg');
+          iconPath = focused ? require('../assets/icons/square-poll-vertical-solid-focused.svg') : require('../assets/icons/square-poll-vertical-solid.svg');
         } else if (route.name === 'Feedback') {
-          iconPath = focused ? require('../assets/icons/comments-solid.svg') : require('../assets/icons/comments-solid.svg');
+          iconPath = focused ? require('../assets/icons/comments-solid-focused.svg') : require('../assets/icons/comments-solid.svg');
         }
 
         return <SvgUri width={size} height={size} source={iconPath} />;
