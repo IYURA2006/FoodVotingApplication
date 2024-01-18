@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import SvgUri from 'react-native-svg-uri';
+import { SvgXml } from 'react-native-svg'; // Import SvgXml from react-native-svg
+import icons from '../../assets/icons/icons';
 import { ScrollView } from 'react-native-gesture-handler';
 
 type HomeScreenProps = {
@@ -16,7 +17,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => (
       </Text>
 
       <TouchableOpacity onPress={() => navigation.navigate('Profile' as never)}>
-        <SvgUri width='32px' height='32px' source={require('../../assets/icons/user-solid.svg')} />
+        <SvgXml xml={icons.userSolid} width={32} height={32} />
       </TouchableOpacity>
     </View>
 

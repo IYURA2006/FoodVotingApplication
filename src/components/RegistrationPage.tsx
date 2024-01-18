@@ -1,27 +1,37 @@
 import React, { useState } from 'react';
 import { View, TextInput, Alert, Button, KeyboardAvoidingView, StyleSheet, Text, ActivityIndicator } from 'react-native';
-import { FIREBASE_AUTH } from '../../FirebaseConfig';
+import { FIREBASE_AUTH, FIRESTORE_DB } from '../../FirebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 
 interface RegistrationPageProps {
   navigation: any; 
 }
 
 const RegistrationPage: React.FC<RegistrationPageProps> = ({ navigation }) => {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const auth = FIREBASE_AUTH;
+  const firestore = FIRESTORE_DB;
 
   const signUp = async () => {
     setLoading(true);
     try {
       const response = await createUserWithEmailAndPassword(auth, email, password);
+
+      await setDoc(doc(firestore, 'users', response.user.uid), {
+        name: name,
+        email: email,
+      });
+
       console.log(response);
       Alert.alert('Check your emails');
-    } catch (err) {
-      console.log(err);
-      Alert.alert('Sign up failed: ');
+
+    } catch (err: any) {
+      console.error(err);
+      Alert.alert('Sign up failed', err.message || 'An unknown error occurred');
     } finally {
       setLoading(false);
     }
@@ -35,7 +45,7 @@ const RegistrationPage: React.FC<RegistrationPageProps> = ({ navigation }) => {
           style={styles.input}
           placeholder='Your name'
           autoCapitalize='none'
-          onChangeText={(text) => setEmail(text)}
+          onChangeText={(text) => setName(text)}
         />
         <TextInput
           style={styles.input}

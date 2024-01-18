@@ -1,7 +1,8 @@
-import * as React from 'react';
+import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import SvgUri from 'react-native-svg-uri';
+import { SvgXml } from 'react-native-svg'; // Import SvgXml from react-native-svg
+import icons from '../assets/icons/icons'; // Import your SVG icons as an object
 
 import HomeScreen from './Inside/HomePage';
 import VotingScreen from './Inside/VotingPage';
@@ -16,19 +17,19 @@ const TabNavigator = () => (
   <Tab.Navigator
     screenOptions={({ route }) => ({
       tabBarIcon: ({ focused, color, size }) => {
-        let iconPath;
+        let icon;
 
         if (route.name === 'Home') {
-          iconPath = focused ? require('../assets/icons/house-solid-focused.svg') : require('../assets/icons/house-solid.svg');
+          icon = focused ? icons.houseSolidFocused : icons.houseSolid;
         } else if (route.name === 'Voting') {
-          iconPath = focused ? require('../assets/icons/check-to-slot-solid-focused.svg') : require('../assets/icons/check-to-slot-solid.svg');
+          icon = focused ? icons.checkToSlotSolidFocused : icons.checkToSlotSolid;
         } else if (route.name === 'Results') {
-          iconPath = focused ? require('../assets/icons/square-poll-vertical-solid-focused.svg') : require('../assets/icons/square-poll-vertical-solid.svg');
+          icon = focused ? icons.squarePollVerticalSolidFocused : icons.squarePollVerticalSolid;
         } else if (route.name === 'Feedback') {
-          iconPath = focused ? require('../assets/icons/comments-solid-focused.svg') : require('../assets/icons/comments-solid.svg');
+          icon = focused ? icons.commentsSolidFocused : icons.commentsSolid;
         }
 
-        return <SvgUri width={size} height={size} source={iconPath} />;
+        return icon ? <SvgXml xml={icon} width={24} height={24} /> : null;
       },
       tabBarActiveTintColor: 'green',
       tabBarInactiveTintColor: 'gray',
