@@ -4,7 +4,7 @@ import { getAuth} from "firebase/auth";
 import {collection, getFirestore} from 'firebase/firestore';
 
 
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyCHXYMaDSEi5mtNJl1qebGd84tsaiWZ-VI",
   authDomain: "wastefreeapp.firebaseapp.com",
   projectId: "wastefreeapp",
@@ -16,7 +16,7 @@ const firebaseConfig = {
 
 
 export const FIREBASE_APP = initializeApp(firebaseConfig);
+
 export const FIREBASE_AUTH = getAuth(FIREBASE_APP);
 export const FIRESTORE_DB = getFirestore(FIREBASE_APP);
-
 export const users = collection(FIRESTORE_DB, 'users');
