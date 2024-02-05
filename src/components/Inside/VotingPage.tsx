@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, Image, Alert, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Button, Image, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import { getDocs, collection, addDoc, getDoc, doc } from 'firebase/firestore';
 import {FIREBASE_AUTH, FIRESTORE_DB} from '../../../FirebaseConfig';
 import { RadioButton } from 'react-native-paper';
@@ -17,36 +17,14 @@ interface FoodOption {
   vegan: boolean;
 }
 
+
 const VotingPage: React.FC = () => {
   const [foodOptions, setFoodOptions] = useState<FoodOption[]>([]);
   const [selectedFoodOptions, setSelectedFoodOptions] = useState<FoodOption[]>([]);
   const [selectedVotes, setSelectedVotes] = useState<string[]>([]);
   const [remainingTime, setRemainingTime] = useState<string | null>(null);
   const [userData, setUserData] = useState<{name: string} | null>(null);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const user = FIREBASE_AUTH.currentUser;
-        if (user) {
-          const userDocRef = doc(FIRESTORE_DB, 'users', user.uid);
-          const userDocSnap = await getDoc(userDocRef);
-
-          if (userDocSnap.exists()) {
-            setUserData(userDocSnap.data() as {name: string});
-          } else {
-            console.log('User data not found in Firestore');
-          }
-        } else {
-          console.log('User not logged in');
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    };
-
-    fetchUserData();
-  }, []);
+  const [nextDayDate, setNextDayDate] = useState<string>('');
 
   useEffect(() => {
     const fetchFoodOptionsFromFirestore = async () => {
@@ -76,34 +54,56 @@ const VotingPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedFoodOptions.length === 0) {
+    const fetchUserData = async () => {
+      try {
+        const user = FIREBASE_AUTH.currentUser;
+        if (user) {
+          const userDocRef = doc(FIRESTORE_DB, 'users', user.uid);
+          const userDocSnap = await getDoc(userDocRef);
+
+          if (userDocSnap.exists()) {
+            setUserData(userDocSnap.data() as {name: string});
+          } else {
+            console.log('User data not found in Firestore');
+          }
+        } else {
+          console.log('User not logged in');
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  useEffect(() => {
+    if (selectedFoodOptions.length === 0 && foodOptions.length > 0) {
       fetchRandomFoodOptions();
     }
-  }, [selectedFoodOptions]);
+  }, [selectedFoodOptions, foodOptions]);
 
   const fetchRandomFoodOptions = () => {
-    if (foodOptions.length > 0) {
-      const selectedFoodOptionIds = new Set<string>();
-      const randomFoodOptions: FoodOption[] = [];
+    const selectedFoodOptionIds = new Set<string>();
+    const randomFoodOptions: FoodOption[] = [];
 
-      while (randomFoodOptions.length < 4) {
-        const shuffledFoodOptions = [...foodOptions].sort(() => Math.random() - 0.5);
-        const selectedFoodOption = shuffledFoodOptions.find(
-          (option) => !selectedFoodOptionIds.has(option.id)
-        );
+    while (randomFoodOptions.length < 4) {
+      const shuffledFoodOptions = [...foodOptions].sort(() => Math.random() - 0.5);
+      const selectedFoodOption = shuffledFoodOptions.find(
+        (option) => !selectedFoodOptionIds.has(option.id)
+      );
 
-        if (selectedFoodOption) {
-          randomFoodOptions.push(selectedFoodOption);
-          selectedFoodOptionIds.add(selectedFoodOption.id);
-        }
+      if (selectedFoodOption) {
+        randomFoodOptions.push(selectedFoodOption);
+        selectedFoodOptionIds.add(selectedFoodOption.id);
       }
-
-      console.log('Random Food Options:', randomFoodOptions);
-
-      randomFoodOptions.forEach((randomFoodOption) => {
-        fetchFoodOptionsSpoonacular(randomFoodOption.name);
-      });
     }
+
+    console.log('Random Food Options:', randomFoodOptions);
+
+    randomFoodOptions.forEach((randomFoodOption) => {
+      fetchFoodOptionsSpoonacular(randomFoodOption.name);
+    });
   };
 
   const fetchFoodOptionsSpoonacular = async (query: string) => {
@@ -165,6 +165,25 @@ const VotingPage: React.FC = () => {
     return () => clearInterval(timerInterval); // Cleanup on unmount
   }, []);
 
+  useEffect(() => {
+    const fetchNextDayDate = () => {
+      const now = new Date();
+      const nextDay = new Date(now);
+      nextDay.setDate(now.getDate() + 1);
+
+      const options: Intl.DateTimeFormatOptions = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      };
+
+      setNextDayDate(nextDay.toLocaleDateString(undefined, options));
+    };
+
+    fetchNextDayDate();
+  }, []);
+
   const handleVoteChange = (foodOptionId: string) => {
     setSelectedVotes([foodOptionId]);
   };
@@ -205,57 +224,78 @@ const VotingPage: React.FC = () => {
     }
   };
 
+  const handleFoodDetails = (foodOptionId: string) => {
+    console.log(`View details for food option with ID: ${foodOptionId}`);
+  };
+
   return (
-    <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+    <ScrollView contentContainerStyle={styles.scrollViewContainer} style={{ marginTop: 20 }}>
       <Text style={styles.remainingTimeText}>{remainingTime && `Remaining time: ${remainingTime}`}</Text>
       <Text style={styles.sectionText}>Voting process</Text>
+
+      <Text style={styles.votingDateText}>
+        {nextDayDate && `for ${nextDayDate}`}
+      </Text>
+      
       <Text style={styles.instructionText}>Choose one food option:</Text>
       <View style={styles.foodOptionsContainer}>
         {selectedFoodOptions.map((foodOption) => (
           <View key={foodOption.id} style={styles.foodOptionBox}>
             <View style={styles.radioButtonContainer}>
-              <RadioButton
-                value={foodOption.id}
-                status={selectedVotes.includes(foodOption.id) ? 'checked' : 'unchecked'}
+              <TouchableOpacity
+                style={[styles.radioButtonStyling, { borderColor: selectedVotes.includes(foodOption.id) ? '#01AF5E' : '#666' }]}
                 onPress={() => handleVoteChange(foodOption.id)}
-              />
+              >
+                {selectedVotes.includes(foodOption.id) && <View style={styles.radioButtonInner} />}
+              </TouchableOpacity>
               <Text style={styles.title}>{foodOption.name}</Text>
             </View>
             <Image source={{ uri: foodOption.image }} style={styles.image} />
+            <TouchableOpacity
+              style={styles.viewDetailsButton}
+              onPress={() => handleFoodDetails(foodOption.id)}
+            >
+              <Text style={styles.viewDetailsButtonText}>View Details</Text>
+            </TouchableOpacity>
           </View>
         ))}
       </View>
-      <Button
-        title="Submit Vote"
-        onPress={handleVoteSubmit}
-        disabled={selectedVotes.length === 0}
-      />
+ 
+ <TouchableOpacity
+            style={[styles.submitButton]}
+            onPress={() => {
+              handleVoteSubmit();
+            }}
+          >
+            <Text style={styles.submitButtonText}>Submit Vote</Text>
+          </TouchableOpacity>
+
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   scrollViewContainer: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
+    alignItems: 'flex-start',
+    padding: 20,
   },
   remainingTimeText: {
     fontSize: 16,
-    marginBottom: 16,
-    textAlign: 'center',
+    marginBottom: 10,
+    textAlign: 'left',
+    color: '#01AF5E',
+    fontWeight: '500',
   },
   sectionText: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 24,
+    fontWeight: '700',
     marginBottom: 8,
-    textAlign: 'center',
   },
   instructionText: {
-    fontSize: 16,
+    fontSize: 18,
     marginBottom: 8,
     textAlign: 'center',
+    fontWeight: '700',
   },
   title: {
     fontSize: 14,
@@ -276,7 +316,8 @@ const styles = StyleSheet.create({
     position: 'relative',
     borderRadius: 10,
     overflow: 'hidden',
-    backgroundColor: '#f0f0f0', // Change background color as needed
+    borderColor: 'rgba(0, 0, 0)',
+    borderWidth: 2,
   },
   image: {
     width: '100%',
@@ -288,9 +329,58 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  votingDateText :{
+    fontSize: 16,
+    marginBottom: 25,
+    textAlign: 'center',
+    fontWeight: '500',
+    color: '#727171',
+  },
   submitButton: {
-    marginTop: 16,
+    backgroundColor: '#1AAB3A',
+    padding: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom:40,
+    marginTop: 10,
+    width: '80%',
+    alignSelf: 'center',
+  },
+  submitButtonText: {
+    color: '#ffffff',
+    fontSize: 18,
+  },
+  radioButtonStyling: {
+    width: 24,
+    flexDirection: 'row',
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+  },
+  radioButtonInner: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#01AF5E',
+  },
+  viewDetailsButton: {
+    position: 'absolute',
+    bottom: 5,
+    right: 5,
+    backgroundColor: '#1AAB3A',
+    padding: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  viewDetailsButtonText: {
+    color: '#ffffff',
+    fontSize: 12,
   },
 });
 
 export default VotingPage;
+
