@@ -9,6 +9,7 @@ import VotingScreen from './Inside/VotingPage';
 import ResultsScreen from './Inside/ResultsPage';
 import FeedbackScreen from './Inside/FeedbackPage';
 import ProfileScreen from './ProfilePage';
+import FoodDetailsPage from './Inside/FoodDetailsPage';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -46,6 +47,7 @@ const Main = () => (
   <Stack.Navigator>
     <Stack.Screen name="Menu" component={TabNavigator} options={{ headerShown: false }} />
     <Stack.Screen name="Profile" component={ProfileScreen} />
+    <Stack.Screen name="FoodDetails" component={FoodDetailsPage} />
   </Stack.Navigator>
 );
 

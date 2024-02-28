@@ -12,6 +12,7 @@ import FeedbackScreen from './components/Inside/FeedbackPage';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { FIREBASE_AUTH } from '../FirebaseConfig';
 import ResultsPage from './components/Inside/ResultsPage';
+import FoodDetailsPage from './components/Inside/FoodDetailsPage';
 
 
 const Stack = createStackNavigator();
@@ -42,6 +43,7 @@ function App() {
           <>
             <Stack.Screen name='Inside' component={InsideLayout}  />
             <Stack.Screen name='Results' component={ResultsPage}  />
+            <Stack.Screen name="FoodDetails" component={FoodDetailsPage} />
           </>
         ) : (
           <>

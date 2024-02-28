@@ -1,5 +1,5 @@
 export type RootStackParamList = {
     Login: undefined;
     Registration: undefined;
-    // ... other screens
+    FoodDetails: { foodOptionId: string };
   };
